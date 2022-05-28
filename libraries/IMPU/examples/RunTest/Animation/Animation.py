@@ -57,7 +57,7 @@ angles = label(pos=vector(-2.5,2,1), text="yaw: 0\npitch: 0\nroll: 0",
 			   align="center", color=color.black, height=30, depth=0)
 rotatingObjects = createRotatingObjects()
 
-ArduinoSerial = serial.Serial("com16", 115200)
+ArduinoSerial = serial.Serial("com3", 115200)
 
 while (True):
 	try:

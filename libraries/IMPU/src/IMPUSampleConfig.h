@@ -2,7 +2,7 @@
 
 #include "IMPU.h"
 #include "WMPU.h"
-#include <EEPromMPUManager.h>
+#include "EEPromMPUManager.h"
 
 class IMPUSampleConfig
 {

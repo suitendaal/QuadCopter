@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ESCTest.ino" />
+    <None Include="..\ESCCalibration\ESCCalibration.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.ESCTest.vsarduino.h">
@@ -24,5 +25,28 @@
     <ClInclude Include="..\..\src\IMotor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\ESC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\IQuadMotors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\QuadMotors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ESCSampleConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\ESC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\QuadMotors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ESCSampleConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
