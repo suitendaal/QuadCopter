@@ -2,6 +2,7 @@
 
 ControllerSampleConfig config;
 IController& controller = config.getController();
+unsigned long currentTime;
 
 void setup() {
 	Serial.begin(115200);
@@ -13,8 +14,15 @@ void setup() {
 		}
 	}
 	Serial.println("Controller is initialized.");
+
+	currentTime = millis();
 }
 
 void loop() {
-	// controller.update();
+	if (!controller.update()) {
+		Serial.println("Something went wrong in updating the controller...");
+	}
+
+	Serial.println(millis() - currentTime);
+	currentTime = millis();
 }

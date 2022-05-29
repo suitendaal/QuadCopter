@@ -36,5 +36,9 @@ bool QuadController::init()
 
 bool QuadController::update()
 {
+    this->mpu.update();
+
+    // TODO: control scheme.
+
     return true;
 }
