@@ -31,12 +31,20 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     // Between 0.0^2 - 10.0^2
     //float thrustRef = 2.0 * 2.0;
     float velRef = sensors.getRemoteController().getVelRef();
-    velRef = velRef > 0 ? velRef : 0;
-    float thrustRef = velRef * velRef;// 1.4 * 1.4;
+    
+    // Turn off if velRef < 0
+    if (velRef < 0) {
+        for (int i = 0; i < IQuadMotors::Motors; i++) {
+            motorSpeeds[i] = 0;
+        }
+        return true;
+    }
+
+    float thrustRef = velRef * velRef;
 
     // Orientation controller
-    float Kp_yaw = 0.0;
-    float Kp_pitch = 0.0;
+    float Kp_yaw = 0.0;// 5.0;
+    float Kp_pitch = 10.0;
     float Kp_roll = 0.0;
 
     VectorFloat ypr;
@@ -48,13 +56,13 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     error.y = mapPi(error.y);
     error.z = mapPi(error.z);
 
-    /*Serial.print("Errors: { yaw: ");
+    Serial.print("Errors: { yaw: ");
     Serial.print(error.x);
     Serial.print(", pitch: ");
     Serial.print(error.y);
     Serial.print(", roll: ");
     Serial.print(error.z);
-    Serial.println(" }");*/
+    Serial.println(" }");
 
     float yawPart = Kp_yaw * error.x;
     float pitchPart = Kp_pitch * error.y;
@@ -69,10 +77,10 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     Serial.println(" }");*/
 
     // Motor thrust ~ (speed / 10)^2
-    motorThrust[0] = thrustRef - yawPart + pitchPart + rollPart;
-    motorThrust[1] = thrustRef + yawPart + pitchPart - rollPart;
-    motorThrust[2] = thrustRef - yawPart - pitchPart - rollPart;
-    motorThrust[3] = thrustRef + yawPart - pitchPart + rollPart;
+    motorThrust[0] = thrustRef + yawPart + pitchPart + rollPart;
+    motorThrust[1] = thrustRef - yawPart + pitchPart - rollPart;
+    motorThrust[2] = thrustRef + yawPart - pitchPart - rollPart;
+    motorThrust[3] = thrustRef - yawPart - pitchPart + rollPart;
 
     for (int i = 0; i < IQuadMotors::Motors; i++) {
         if (motorThrust[i] < 0) {
