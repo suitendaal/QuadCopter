@@ -5,6 +5,15 @@
 class IQuadMotors
 {
 public:
+	const static int MinSpeed = IMotor::MinSpeed;
+	const static int MaxSpeed = IMotor::MaxSpeed;
+	const static uint8_t Motors = 4;
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	virtual ~IQuadMotors() {};
+
 	/// <summary>
 	/// Initialize the quadmotors.
 	/// </summary>
@@ -26,18 +35,15 @@ public:
 	/// <summary>
 	/// Set motor speeds.
 	/// </summary>
-	/// <param name="speed1">Motor 1 speed, value between 0 and 255.</param>
-	/// <param name="speed2">Motor 2 speed, value between 0 and 255.</param>
-	/// <param name="speed3">Motor 3 speed, value between 0 and 255.</param>
-	/// <param name="speed4">Motor 4 speed, value between 0 and 255.</param>
+	/// <param name="speeds">Motor speeds.</param>
 	/// <returns>A boolean indicating whether the setting of the speed succeeded.</returns>
-	virtual bool setSpeed(uint8_t speed1, uint8_t speed2, uint8_t speed3, uint8_t speed4) = 0;
+	virtual bool setSpeed(int speeds[Motors]) = 0;
 
 	/// <summary>
 	/// Set motor speeds.
 	/// </summary>
-	/// <param name="speed">Motor speed, value between 0 and 255.</param>
+	/// <param name="speed">Motor speed, value between 0 and 1000.</param>
 	/// <returns>A boolean indicating whether the setting of the speed succeeded.</returns>
-	virtual bool setSpeed(uint8_t speed) = 0;
+	virtual bool setSpeed(int speed) = 0;
 };
 

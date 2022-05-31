@@ -15,6 +15,10 @@ ESC::ESC(int pin, int minFreq, int maxFreq)
 {
 }
 
+ESC::~ESC()
+{
+}
+
 bool ESC::attach(int pin)
 {
     this->pin = pin;
@@ -26,13 +30,15 @@ bool ESC::init()
     return this->attach(this->pin);
 }
 
-bool ESC::setSpeed(uint8_t speed)
+bool ESC::setSpeed(int speed)
 {
     this->mESC.writeMicroseconds(this->mapSpeed(speed));
     return true;
 }
 
-int ESC::mapSpeed(uint8_t speed)
+int ESC::mapSpeed(int speed)
 {
-    return ((float)speed / 255) * (this->maxFreq - this->minFreq) + this->minFreq;
+    // Put between minspeed and maxspeed.
+    speed = speed < MinSpeed ? MinSpeed : speed > MaxSpeed ? MaxSpeed : speed;
+    return ((float)(speed - IMotor::MinSpeed) / (IMotor::MaxSpeed - IMotor::MinSpeed)) * (this->maxFreq - this->minFreq) + this->minFreq;
 }

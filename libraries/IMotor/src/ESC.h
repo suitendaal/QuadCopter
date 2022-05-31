@@ -6,17 +6,17 @@
 class ESC : public IMotor
 {
 private:
+	int pin;
 	int minFreq;
 	int maxFreq;
-	int pin;
 	Servo mESC;
 
 	/// <summary>
 	/// Maps the speed to a value that can be written to the Servo library.
 	/// </summary>
-	/// <param name="speed"></param>
+	/// <param name="speed">Speed.</param>
 	/// <returns></returns>
-	int mapSpeed(uint8_t speed);;
+	int mapSpeed(int speed);
 
 public:
 	/// <summary>
@@ -38,6 +38,8 @@ public:
 	/// <param name="maxFreq">Maximum pwm frequency.</param>
 	ESC(int pin, int minFreq, int maxFreq);
 
+	virtual ~ESC();
+
 	/// <summary>
 	/// Attach the ESC to a pin.
 	/// </summary>
@@ -49,6 +51,6 @@ public:
 	virtual bool init() override;
 
 	/// <inheritdoc/>
-	virtual bool setSpeed(uint8_t speed) override;
+	virtual bool setSpeed(int speed) override;
 };
 

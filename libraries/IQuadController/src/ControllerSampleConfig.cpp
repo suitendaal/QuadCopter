@@ -1,6 +1,6 @@
 #include "ControllerSampleConfig.h"
 
-IController& ControllerSampleConfig::getController()
+IControlManager& ControllerSampleConfig::getController()
 {
     return this->controller;
 }

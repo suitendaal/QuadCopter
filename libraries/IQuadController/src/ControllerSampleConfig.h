@@ -3,18 +3,31 @@
 #include "QuadMotors.h"
 #include "EEPromMPUManager.h"
 #include "WMPU.h"
+#include "SerialController.h"
 #include "QuadController.h"
-#include "IController.h"
+#include "IControlManager.h"
+#include "SensorManager.h"
+#include "Controller.h"
 
 class ControllerSampleConfig
 {
 private:
+	// Motors
 	int quadPins[4] = { 3, 5, 6, 7 };
-	QuadMotors quad = QuadMotors(quadPins[0], quadPins[1], quadPins[2], quadPins[3]);
+	QuadMotors quad = QuadMotors(quadPins);
+
+	// Sensors
 	EEPromMPUManager eePromMPUManager;
 	WMPU mpu = WMPU(eePromMPUManager);
-	QuadController controller = QuadController(mpu, quad);
+	SerialController remoteController;
+	SensorManager sensors = SensorManager(mpu, remoteController);
+
+	// Controllers
+	Controller mController;
+
+	// Quadcontroller
+	QuadController controller = QuadController(sensors, quad, mController);
 public:
-	IController& getController();
+	IControlManager& getController();
 };
 

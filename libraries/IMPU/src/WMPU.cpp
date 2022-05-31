@@ -52,12 +52,12 @@ bool WMPU::init() {
             return true;
         }
         else {
-            Serial.println("MPU not calibrated. Waiting execution...");
+            //Serial.println("MPU not calibrated. Waiting execution...");
             return false;
         }
     }
     else {
-        Serial.println("Bad devStatus. Waiting execution...");
+        //Serial.println("Bad devStatus. Waiting execution...");
         return false;
     }
 }
@@ -88,7 +88,7 @@ bool WMPU::getYPR(VectorFloat& ypr) {
 
 bool WMPU::calibrate()
 {
-    Serial.println("Assuming MPU is flat and still...");
+    //Serial.println("Assuming MPU is flat and still...");
 
     uint8_t devStatus = this->begin();
     if (devStatus == 0) {
@@ -105,12 +105,12 @@ bool WMPU::calibrate()
         this->eePromMPUManager.setZAccelOffset(nsMPU::mpu.getZAccelOffset());
 
         this->eePromMPUManager.setMPUCalibFlag();
-        Serial.println("Calibration complete.");
+        //Serial.println("Calibration complete.");
 
         return true;
     }
     else {
-        Serial.println("Bad devStatus. Waiting execution...");
+        //Serial.println("Bad devStatus. Waiting execution...");
         return false;
     }
 }

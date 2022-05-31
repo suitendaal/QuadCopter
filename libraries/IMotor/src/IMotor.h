@@ -5,8 +5,13 @@
 class IMotor
 {
 public:
-	const static uint8_t minSpeed = 0;
-	const static uint8_t maxSpeed = 255;
+	const static int MinSpeed = 0;
+	const static int MaxSpeed = 1000;
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	virtual ~IMotor() {};
 
 	/// <summary>
 	/// Initialize the motor up to but not calibration.
@@ -17,8 +22,8 @@ public:
 	/// <summary>
 	/// Set the motor speed.
 	/// </summary>
-	/// <param name="speed">Speed, value between 0 and 255.</param>
+	/// <param name="speed">Speed, value between 0 and 1000.</param>
 	/// <returns>A boolean indicating whether the setting succeeded.</returns>
-	virtual bool setSpeed(uint8_t speed) = 0;
+	virtual bool setSpeed(int speed) = 0;
 };
 

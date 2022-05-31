@@ -1,47 +1,56 @@
 #include "QuadMotors.h"
+#include "Arduino.h"
 
 QuadMotors::QuadMotors()
-    : QuadMotors(3, 5, 6, 7)
+    : QuadMotors({ 3, 5, 6, 7 })
 {
 }
 
-QuadMotors::QuadMotors(int pin1, int pin2, int pin3, int pin4)
+QuadMotors::QuadMotors(const int(&pins)[Motors])
 {
-    this->escs[0] = ESC(pin1);
-    this->escs[1] = ESC(pin2);
-    this->escs[2] = ESC(pin3);
-    this->escs[3] = ESC(pin4);
+    for (int i = 0; i < Motors; i++) {
+        this->escs[i] = new ESC(pins[i]);
+    }
 }
 
-QuadMotors::QuadMotors(int pin1, int pin2, int pin3, int pin4, int minFreq, int maxFreq)
+QuadMotors::QuadMotors(const int(&pins)[Motors], int minFreq, int maxFreq)
 {
-    this->escs[0] = ESC(pin1, minFreq, maxFreq);
-    this->escs[1] = ESC(pin2, minFreq, maxFreq);
-    this->escs[2] = ESC(pin3, minFreq, maxFreq);
-    this->escs[3] = ESC(pin4, minFreq, maxFreq);
+    for (int i = 0; i < Motors; i++) {
+        this->escs[i] = new ESC(pins[i], minFreq, maxFreq);
+    }
 }
 
-QuadMotors::QuadMotors(ESC esc1, ESC esc2, ESC esc3, ESC esc4)
+QuadMotors::QuadMotors(IMotor* motors[Motors])
 {
-    this->escs[0] = esc1;
-    this->escs[1] = esc2;
-    this->escs[2] = esc3;
-    this->escs[3] = esc4;
+    for (int i = 0; i < Motors; i++) {
+        this->escs[i] = motors[i];
+    }
+}
+
+QuadMotors::~QuadMotors()
+{
+    for (int i = 0; i < Motors; i++) {
+        delete this->escs[i];
+    }
+    delete[] this->escs;
 }
 
 bool QuadMotors::init()
 {
-    for (int i = 0; i < 4; i++) {
-        this->escs[i].init();
+    for (int i = 0; i < Motors; i++) {
+        //(*this)[i].init();
+        this->escs[i]->init();
     }
+
+    return true;
 }
 
 bool QuadMotors::arm()
 {
-    Serial.println("Arming ESCs.");
+    //Serial.println("Arming ESCs.");
     bool result = this->setSpeed(0);
     if (!result) {
-        Serial.println("Something went wrong...");
+        //Serial.println("Something went wrong...");
         return result;
     }
 
@@ -53,27 +62,27 @@ bool QuadMotors::calibrate()
 {
     // Boolean indicating that calibration succeeds.
     bool result = true;
-    Serial.println("ESCs should be connected by now.");
-    Serial.println("Setting maximum throttle.");
-    this->setSpeed(IMotor::maxSpeed);
+    //Serial.println("ESCs should be connected by now.");
+    //Serial.println("Setting maximum throttle.");
+    this->setSpeed(IMotor::MaxSpeed);
 
     if (!result) {
-        Serial.println("Something went wrong...");
+        //Serial.println("Something went wrong...");
         return result;
     }
 
-    Serial.println("Wait for 3 seconds.");
+    //Serial.println("Wait for 3 seconds.");
     delay(3000);
 
-    Serial.println("Setting minimum throttle.");
-    this->setSpeed(IMotor::minSpeed);
+    //Serial.println("Setting minimum throttle.");
+    this->setSpeed(IMotor::MinSpeed);
 
     if (!result) {
-        Serial.println("Something went wrong...");
+        //Serial.println("Something went wrong...");
         return result;
     }
 
-    Serial.println("Wait for 3 seconds.");
+    //Serial.println("Wait for 3 seconds.");
     delay(3000);
 
     Serial.println("Calibration is done.");
@@ -81,22 +90,23 @@ bool QuadMotors::calibrate()
     return result;
 }
 
-bool QuadMotors::setSpeed(uint8_t speed1, uint8_t speed2, uint8_t speed3, uint8_t speed4)
+bool QuadMotors::setSpeed(int speeds[Motors])
 {
     bool result = true;
-    result = result && this->escs[0].setSpeed(speed1);
-    result = result && this->escs[1].setSpeed(speed2);
-    result = result && this->escs[2].setSpeed(speed3);
-    result = result && this->escs[3].setSpeed(speed4);
+    for (int i = 0; i < Motors; i++) {
+        result = result && this->escs[i]->setSpeed(speeds[i]);
+        //result = result && (*this)[i].setSpeed(speeds[i]);
+    }
 
     return result;
 }
 
-bool QuadMotors::setSpeed(uint8_t speed)
+bool QuadMotors::setSpeed(int speed)
 {
     bool result = true;
-    for (int i = 0; i < 4; i++) {
-        result = result && this->escs[i].setSpeed(speed);
+    for (int i = 0; i < Motors; i++) {
+        result = result && this->escs[i]->setSpeed(speed);
+        //result = result && (*this)[i].setSpeed(speed);
     }
 
     return result;

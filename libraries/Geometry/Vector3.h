@@ -45,6 +45,14 @@ public:
     {
     }
 
+    virtual Vector3<T> operator-(Vector3<T>& other) const {
+        Vector3<T> result;
+        result.x = this->x - other.x;
+        result.y = this->y - other.y;
+        result.z = this->z - other.z;
+        return result;
+    }
+
     /// <summary>
     /// Gets the magnitude of the vector.
     /// </summary>
@@ -101,6 +109,19 @@ public:
         v.rotate(q);
         return v;
     }
+
+    Quaternion yprAsQuaternion() const {
+        Quaternion q;
+        q.w = cos(this->z / 2) * cos(this->y / 2) * cos(this->x / 2)
+            + sin(this->z / 2) * sin(this->y / 2) * sin(this->x / 2);
+        q.x = sin(this->z / 2) * cos(this->y / 2) * cos(this->x / 2)
+            - cos(this->z / 2) * sin(this->y / 2) * sin(this->x / 2);
+        q.y = cos(this->z / 2) * sin(this->y / 2) * cos(this->x / 2)
+            + sin(this->z / 2) * cos(this->y / 2) * sin(this->x / 2);
+        q.z = cos(this->z / 2) * cos(this->y / 2) * sin(this->x / 2)
+            - sin(this->z / 2) * sin(this->y / 2) * cos(this->x / 2);
+        return q;
+    }
 };
 
 class VectorInt16 : public Vector3<uint16_t> {
@@ -110,6 +131,11 @@ class VectorInt16 : public Vector3<uint16_t> {
 class VectorFloat : public Vector3<float> {
     using Vector3::Vector3;
 public:
+    virtual VectorFloat operator-(VectorFloat& other) const {
+        VectorFloat result(this->x - other.x, this->y - other.y, this->z - other.z);
+        return result;
+    }
+
     /// <summary>
     /// Calculates the yaw, pitch and roll based on a quaternion.
     /// </summary>
