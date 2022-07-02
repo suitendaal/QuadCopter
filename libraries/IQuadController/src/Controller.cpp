@@ -39,6 +39,7 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     //float thrustRef = 2.0 * 2.0;
     float velRef = sensors.getRemoteController().getVelRef();
     float Ku = sensors.getRemoteController().getKRef();
+    // TODO: We  waren bij vref=20, Ku=30, maar toen bleek dat de limieten van [-7,7] te laag waren.
     
     this->rollPID.tune(Ku, 0, 0);
     
