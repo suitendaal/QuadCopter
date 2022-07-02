@@ -29,12 +29,12 @@ void setup() {
 void loop() {
 	// put your main code here, to run repeatedly:
 	Serial.print("Speed of ");
-	Serial.println(0.1 * 100);
+	Serial.println(0.1 * 1000);
 	quad.setSpeed(0.1 * IQuadMotors::MaxSpeed);
 	delay(2000);
 
 	Serial.print("Speed of ");
-	Serial.println(0.3 * 100);
+	Serial.println(0.3 * 1000);
 	quad.setSpeed(0.3 * IQuadMotors::MaxSpeed);
 	delay(2000);
 }

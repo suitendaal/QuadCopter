@@ -16,5 +16,7 @@ public:
 	virtual bool update() = 0;
 
 	virtual float getVelRef() = 0;
+
+	virtual float getKRef() = 0;
 };
 

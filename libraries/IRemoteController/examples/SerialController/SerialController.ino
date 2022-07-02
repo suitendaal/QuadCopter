@@ -14,7 +14,9 @@ void setup() {
 void loop() {
 	controller.update();
 	//if (controller.getVelRef() > 0) {
+	Serial.println("hoi");
 		Serial.println(controller.getVelRef());
+		Serial.println(controller.getKRef());
 	//}
 	delay(100);
 }

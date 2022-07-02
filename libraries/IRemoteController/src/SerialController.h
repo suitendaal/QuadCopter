@@ -6,6 +6,7 @@ class SerialController : public IRemoteController
 {
 private:
 	float velRef = 0;
+	float KRef = 0;
 public:
 	/// <inheritdoc/>
 	virtual bool init() override;
@@ -15,5 +16,8 @@ public:
 
 	/// <inheritdoc/>
 	virtual float getVelRef() override;
+
+	/// <inheritdoc/>
+	virtual float getKRef() override;
 };
 

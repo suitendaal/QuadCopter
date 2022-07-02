@@ -23,7 +23,7 @@ bool Controller::init()
     this->pitchPID.tune(0, 0, 0);
     this->pitchPID.constraint(-7, 7);
     //this->rollPID.tune(0, 0.5, 0);
-    this->rollPID.tune(0.37, 1.2, 0);
+    this->rollPID.tune(0, 0, 0);
     this->rollPID.constraint(-7, 7);
     return true;
 }
@@ -38,6 +38,9 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     // Between 0.0^2 - 10.0^2
     //float thrustRef = 2.0 * 2.0;
     float velRef = sensors.getRemoteController().getVelRef();
+    float Ku = sensors.getRemoteController().getKRef();
+    
+    this->rollPID.tune(Ku, 0, 0);
     
     // Turn off if velRef < 0
     if (velRef < 0) {
