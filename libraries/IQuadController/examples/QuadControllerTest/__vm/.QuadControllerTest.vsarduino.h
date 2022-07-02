@@ -90,5 +90,6 @@ typedef void *__builtin_va_list;
 #define pgm_read_ptr(address_short)   short()
 
 #include "QuadControllerTest.ino"
+#include "..\PrintSensorValues\PrintSensorValues.ino"
 #endif
 #endif

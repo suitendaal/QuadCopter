@@ -2,7 +2,7 @@
 
 ControllerSampleConfig config;
 IControlManager& controller = config.getController();
-//unsigned long currentTime;
+unsigned long currentTime;
 
 void setup() {
 	Serial.begin(115200);
@@ -15,21 +15,19 @@ void setup() {
 		}
 	}
 	Serial.println("Controller is initialized.");
-
 	delay(5000);
+	Serial.println("Starting...");
 
-	//currentTime = millis();
+	currentTime = millis();
 }
 
 void loop() {
-	if (!controller.update()) {
-		Serial.println("Something went wrong in updating the quad controller...");
+	if (!controller.updateSensors()) {
+		Serial.println("Something went wrong in updating the controller...");
 	}
 
-	/*Serial.print("Time since last update: ");
-	Serial.print(millis() - currentTime);
-	Serial.println(" ms");*/
+	Serial.println(controller.toString());
 
-	delay(10);
-	//currentTime = millis();
+	delay(100);
+	currentTime = millis();
 }

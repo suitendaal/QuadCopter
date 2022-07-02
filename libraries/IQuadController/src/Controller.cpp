@@ -18,6 +18,13 @@ float mapPi(float value) {
 
 bool Controller::init()
 {
+    this->yawPID.tune(0, 0, 0);
+    this->yawPID.constraint(-7, 7);
+    this->pitchPID.tune(0, 0, 0);
+    this->pitchPID.constraint(-7, 7);
+    //this->rollPID.tune(0, 0.5, 0);
+    this->rollPID.tune(0.37, 1.2, 0);
+    this->rollPID.constraint(-7, 7);
     return true;
 }
 
@@ -26,8 +33,8 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     float motorThrust[IQuadMotors::Motors];
 
     // Position controller
-    VectorFloat v(0, 0, 0);
-    Quaternion orientationRef = v.yprAsQuaternion();
+    VectorFloat orientationRef(0, 0, 0);
+    VectorFloat orientationRefDot(0, 0, 0);
     // Between 0.0^2 - 10.0^2
     //float thrustRef = 2.0 * 2.0;
     float velRef = sensors.getRemoteController().getVelRef();
@@ -42,15 +49,14 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
 
     float thrustRef = velRef * velRef;
 
-    // Orientation controller
-    float Kp_yaw = 0.0;// 5.0;
-    float Kp_pitch = 10.0;
-    float Kp_roll = 0.0;
-
     VectorFloat ypr;
     sensors.getMPU().getYPR(ypr);
+    VectorFloat yprDot;
+    sensors.getMPU().getYPRRate(yprDot);
     VectorFloat error;
-    error = VectorFloat::yprFromQuaternion(orientationRef) - ypr;
+    error = orientationRef - ypr;
+    VectorFloat errorDot;
+    errorDot = orientationRefDot - yprDot;
 
     error.x = mapPi(error.x);
     error.y = mapPi(error.y);
@@ -64,17 +70,17 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     Serial.print(error.z);
     Serial.println(" }");
 
-    float yawPart = Kp_yaw * error.x;
-    float pitchPart = Kp_pitch * error.y;
-    float rollPart = Kp_roll * error.z;
+    float yawPart = this->yawPID.compute(error.x, errorDot.x, 0, 0);
+    float pitchPart = this->pitchPID.compute(error.y, errorDot.y, 0, 0);
+    float rollPart = this->rollPID.compute(error.z, errorDot.z, 0, 0);
 
-    /*Serial.print("PID: { yaw: ");
+    Serial.print("PID: { yaw: ");
     Serial.print(yawPart);
     Serial.print(", pitch: ");
     Serial.print(pitchPart);
     Serial.print(", roll: ");
     Serial.print(rollPart);
-    Serial.println(" }");*/
+    Serial.println(" }");
 
     // Motor thrust ~ (speed / 10)^2
     motorThrust[0] = thrustRef + yawPart + pitchPart + rollPart;
@@ -87,7 +93,7 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
             motorSpeeds[i] = 0;
         }
         else {
-            motorSpeeds[i] = 100.0 * sqrt(motorThrust[i]);
+            motorSpeeds[i] = 10.0 * sqrt(motorThrust[i]);
         }
     }
 

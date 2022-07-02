@@ -32,3 +32,26 @@ IRemoteController& SensorManager::getRemoteController()
 {
     return this->remoteController;
 }
+
+String SensorManager::toString()
+{
+    VectorFloat ypr;
+    this->mpu.getYPR(ypr);
+    VectorFloat omega;
+    this->mpu.getAngularVelocity(omega);
+    String result = "time: ";
+    result += millis();
+    result += ", yaw: ";
+    result += ypr.x;
+    result += ", pitch: ";
+    result += ypr.y;
+    result += ", roll: ";
+    result += ypr.z;
+    result += ", wx: ";
+    result += omega.x;
+    result += ", wy: ";
+    result += omega.y;
+    result += ", wz: ";
+    result += omega.z;
+    return result;
+}

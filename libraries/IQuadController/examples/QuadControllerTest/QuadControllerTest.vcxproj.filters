@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="QuadControllerTest.ino" />
+    <None Include="..\PrintSensorValues\PrintSensorValues.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.QuadControllerTest.vsarduino.h">

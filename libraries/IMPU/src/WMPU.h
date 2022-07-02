@@ -43,9 +43,6 @@ public:
 	virtual bool update() override;
 
 	/// <inheritdoc/>
-	virtual bool getYPR(VectorFloat& ypr) override;
-
-	/// <inheritdoc/>
 	virtual bool calibrate() override;
 
 	/// <inheritdoc/>
@@ -53,4 +50,19 @@ public:
 
 	/// <inheritdoc/>
 	virtual bool resetCalibration() override;
+
+	/// <inheritdoc/>
+	virtual bool getYPR(VectorFloat& ypr) override;
+
+	/// <inheritdoc/>
+	virtual bool getOrientation(Quaternion& q) override;
+
+	/// <inheritdoc/>
+	virtual bool getAngularVelocity(VectorFloat& omega) override;
+
+	/// <inheritdoc/>
+	virtual bool getAngularVelocity(Quaternion& qdot) override;
+
+	/// <inheritdoc/>
+	virtual bool getYPRRate(VectorFloat& yprRate) override;
 };

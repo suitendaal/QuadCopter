@@ -24,16 +24,10 @@ void PID::constraint(float underLimit, float upperLimit)
     this->upperLimit = upperLimit;
 }
 
-float PID::compute(float setPoint, float value)
+float PID::compute(float error, float errorDot, long int now)
 {
-    long int now = millis();
-    float error = setPoint - value;
-    
-    float derivative = 0;
     if (this->lastTime >= 0) {
-        float timeDiff = now - this->lastTime;
-        derivative = (error - this->previousError) / timeDiff;
-        this->integral += error * timeDiff;
+        this->integral += error * (now - this->lastTime) / 1000.0;
         if (this->limit)
         {
             this->integral = this->integral < this->underLimit / this->Ki ? this->underLimit / this->Ki :
@@ -41,10 +35,10 @@ float PID::compute(float setPoint, float value)
         }
     }
 
-    
+
 
     float proportionalPart = this->Kp * error;
-    float derivativePart = this->lastTime >= 0 ? this->Kd * derivative : 0;
+    float derivativePart = this->lastTime >= 0 ? this->Kd * errorDot : 0;
     float integralPart = this->Ki * this->integral;
     float result = proportionalPart + derivativePart + integralPart;
     if (this->limit)
@@ -56,4 +50,22 @@ float PID::compute(float setPoint, float value)
     this->lastTime = now;
     this->previousError = error;
     return result;
+}
+
+float PID::compute(float setPoint, float value)
+{
+    long int now = millis();
+    float error = setPoint - value;
+
+    float errorDot = 0;
+    if (this->lastTime >= 0) {
+        errorDot = (error - this->previousError) / ((now - this->lastTime) / 1000.0);
+    }
+
+    return this->compute(error, errorDot, now);
+}
+
+float PID::compute(float setPoint, float setPointDot, float value, float valueDot)
+{
+    return this->compute(setPoint - value, setPointDot - valueDot, millis());
 }

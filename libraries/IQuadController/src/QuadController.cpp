@@ -9,12 +9,15 @@ QuadController::QuadController(ISensorManager& sensors, IQuadMotors& quad, ICont
 bool QuadController::arm()
 {
     bool result = this->quad.arm();
-
-    // Delay for 7 seconds
-    // TODO: replace in future by button click or so.
-    delay(10000);
-
+    this->armTime = millis();
     return result;
+}
+
+bool QuadController::isArmed()
+{
+    // TODO: replace by buttonclick or so.
+    // 10 seconds after arming.
+    return millis() > this->armTime + 15000;
 }
 
 void QuadController::controlLoop()
@@ -48,8 +51,15 @@ void QuadController::setMotorSpeeds(float(&speeds)[IQuadMotors::Motors]) {
 
 bool QuadController::init()
 {
+    // Arm quadcopter
+    bool result = this->arm();
+    //Serial.print("Arm motors: ");
+    //Serial.println(result);
+    
     // Initialize MPU
-    bool result = this->sensors.init();
+    if (result) {
+        result = result && this->sensors.init();
+    }
     //Serial.print("MPU init: ");
     //Serial.println(result);
 
@@ -67,12 +77,10 @@ bool QuadController::init()
     //Serial.print("Controller init: ");
     //Serial.println(result);
 
-    // Arm quadcopter
+    // Wait for arming
     if (result) {
-        result = result && this->arm();
+        while (!this->isArmed());
     }
-    //Serial.print("Arm motors: ");
-    //Serial.println(result);
 
     return result;
 }
@@ -80,12 +88,18 @@ bool QuadController::init()
 bool QuadController::update()
 {
     // Update the sensor readings.
-    this->sensors.update();
+    bool result = this->updateSensors();
 
     // Update the control inputs.
     this->controlLoop();
 
-    return true;
+    return result;
+}
+
+bool QuadController::updateSensors()
+{
+    // Update the sensor readings.
+    return this->sensors.update();
 }
 
 void QuadController::spin()
@@ -94,4 +108,9 @@ void QuadController::spin()
     while (true) {
         this->update();
     }
+}
+
+String QuadController::toString()
+{
+    return this->sensors.toString();
 }

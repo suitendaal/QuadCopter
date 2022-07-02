@@ -2,6 +2,7 @@
 
 #include "IMPU.h"
 #include "IRemoteController.h"
+#include "Arduino.h"
 
 class ISensorManager
 {
@@ -29,5 +30,11 @@ public:
 	/// </summary>
 	/// <returns>Remote controller.</returns>
 	virtual IRemoteController& getRemoteController() = 0;
+
+	/// <summary>
+	/// Converts sensorvalues to string.
+	/// </summary>
+	/// <returns>Sensorvalues as string.</returns>
+	virtual String toString() = 0;
 };
 

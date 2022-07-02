@@ -21,5 +21,8 @@ public:
 
 	/// <inheritdoc/>
 	virtual IRemoteController& getRemoteController() override;
+
+	/// <inheritdoc/>
+	virtual String toString() override;
 };
 

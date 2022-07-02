@@ -11,12 +11,19 @@ private:
 	ISensorManager& sensors;
 	IQuadMotors& quad;
 	IController& controller;
+	long int armTime;
 
 	/// <summary>
 	/// Arm the quadcopter motors.
 	/// </summary>
-	/// <returns>A boolean indicating that the arming succeeded.</returns>
+	/// <returns>A boolean indicating whether the arming succeeded.</returns>
 	bool arm();
+
+	/// <summary>
+	/// Checks if the motors are armed.
+	/// </summary>
+	/// <returns>A boolean indicating whether the motors are armed.</returns>
+	bool isArmed();
 
 	/// <summary>
 	/// Calculate the desired motor speeds.
@@ -38,6 +45,12 @@ public:
 	virtual bool update() override;
 
 	/// <inheritdoc/>
+	virtual bool updateSensors() override;
+
+	/// <inheritdoc/>
 	virtual void spin() override;
+
+	/// <inheritdoc/>
+	virtual String toString() override;
 };
 
