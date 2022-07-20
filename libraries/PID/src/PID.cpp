@@ -27,11 +27,11 @@ void PID::constraint(float underLimit, float upperLimit)
 float PID::compute(float error, float errorDot, long int now)
 {
     if (this->lastTime >= 0) {
-        this->integral += error * (now - this->lastTime) / 1000.0;
+        this->integral += this->Ki * error * (now - this->lastTime) / 1000.0;
         if (this->limit)
         {
-            this->integral = this->integral < this->underLimit / this->Ki ? this->underLimit / this->Ki :
-                this->integral > this->upperLimit / this->Ki ? this->upperLimit / this->Ki : this->integral;
+            this->integral = this->integral < this->underLimit ? this->underLimit :
+                this->integral > this->upperLimit ? this->upperLimit : this->integral;
         }
     }
 
@@ -39,7 +39,7 @@ float PID::compute(float error, float errorDot, long int now)
 
     float proportionalPart = this->Kp * error;
     float derivativePart = this->lastTime >= 0 ? this->Kd * errorDot : 0;
-    float integralPart = this->Ki * this->integral;
+    float integralPart = this->integral;
     float result = proportionalPart + derivativePart + integralPart;
     if (this->limit)
     {

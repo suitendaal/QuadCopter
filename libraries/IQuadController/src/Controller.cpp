@@ -24,7 +24,7 @@ bool Controller::init()
     this->pitchPID.constraint(-7, 7);
     //this->rollPID.tune(0, 0.5, 0);
     this->rollPID.tune(0, 0, 0);
-    this->rollPID.constraint(-7, 7);
+    this->rollPID.constraint(-50, 50);
     return true;
 }
 
@@ -39,17 +39,15 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     //float thrustRef = 2.0 * 2.0;
     float velRef = sensors.getRemoteController().getVelRef();
     float Ku = sensors.getRemoteController().getKRef();
-    // TODO: We  waren bij vref=20, Ku=30, maar toen bleek dat de limieten van [-7,7] te laag waren.
+    float Kp = 5.1;
+    //float Ki = 1 / 1.96 * Kp;
+    float Ki = 37.8;
+    //float Kd = 0.49 * Kp;
+    float Kd = 0.172;
+    // TODO: We  waren bij vref=3, Ku=8.5
     
-    this->rollPID.tune(Ku, 0, 0);
-    
-    // Turn off if velRef < 0
-    if (velRef < 0) {
-        for (int i = 0; i < IQuadMotors::Motors; i++) {
-            motorSpeeds[i] = 0;
-        }
-        return true;
-    }
+    this->rollPID.tune(Ku * Kp, Ku * Kd, Ku * Ki);
+    //this->rollPID.tune(Ku, 0, 0);
 
     float thrustRef = velRef * velRef;
 
@@ -66,25 +64,37 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
     error.y = mapPi(error.y);
     error.z = mapPi(error.z);
 
-    Serial.print("Errors: { yaw: ");
+    /*Serial.print("Errors: { yaw: ");
     Serial.print(error.x);
     Serial.print(", pitch: ");
     Serial.print(error.y);
     Serial.print(", roll: ");
     Serial.print(error.z);
-    Serial.println(" }");
+    Serial.println(" }");*/
 
     float yawPart = this->yawPID.compute(error.x, errorDot.x, 0, 0);
     float pitchPart = this->pitchPID.compute(error.y, errorDot.y, 0, 0);
     float rollPart = this->rollPID.compute(error.z, errorDot.z, 0, 0);
 
-    Serial.print("PID: { yaw: ");
+    /*Serial.print("PID: { yaw: ");
     Serial.print(yawPart);
     Serial.print(", pitch: ");
-    Serial.print(pitchPart);
-    Serial.print(", roll: ");
+    Serial.print(pitchPart);*/
+    Serial.print("[");
+    Serial.print(millis());
+    Serial.print(", ");
     Serial.print(rollPart);
-    Serial.println(" }");
+    Serial.print(", ");
+    Serial.print(error.z);
+    Serial.println("],");
+
+    // Turn off if velRef < 0
+    if (velRef < 0) {
+        for (int i = 0; i < IQuadMotors::Motors; i++) {
+            motorSpeeds[i] = 0;
+        }
+        return true;
+    }
 
     // Motor thrust ~ (speed / 10)^2
     motorThrust[0] = thrustRef + yawPart + pitchPart + rollPart;
@@ -97,7 +107,7 @@ bool Controller::calculate(ISensorManager& sensors, float(&motorSpeeds)[IQuadMot
             motorSpeeds[i] = 0;
         }
         else {
-            motorSpeeds[i] = 10.0 * sqrt(motorThrust[i]);
+            motorSpeeds[i] = 100.0 * sqrt(motorThrust[i]);
         }
     }
 
